@@ -25,3 +25,9 @@ a{
   text-decoration: none;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
+@media screen and (min-width:769px){
+  body{
+    width: 750px;
+    margin: auto;
+  }
+}

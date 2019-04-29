@@ -1,23 +1,22 @@
 <template>
-  <div id="app">
-    <my-header></my-header>
-  </div>
+    <div id="app">
+        <router-view></router-view>
+    </div>
 </template>
 <script>
-import myHeader from './views/Layout/Header.vue'
 export default {
-  components:{
-    myHeader
-  }
-}
+    components: {}
+};
 </script>
 
 <style>
-/* #app { */
-  /* font: lighter 14px "Menlo",PingFangSC-Regular,Microsoft Yahe; */
-  /* font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale; */
-/* } */
+#app { 
+    width: 100%;
+    height: 100%;
+    /* #464541 */
+    background-image: linear-gradient(to bottom, #1b2e36,#383734 100%);
+    color:#999;
+
+}
 
 </style>

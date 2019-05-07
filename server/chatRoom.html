@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+    <script>
+        var soct = io('ws://localhost:3000/');
+        var number = Math.floor(Math.random()*10)
+        // 建立连接，进入时
+        soct.emit('mess',number)
+        soct.on('enter', function (data) {
+            console.log(data);
+            // socket.emit('my other event', { my: 'data' });
+        })
+        // 发送群聊消息
+
+        // 退出时
+        soct.on('leave', function (data) {
+            console.log(data);
+        })
+        
+    </script>
+</body>
+</html>

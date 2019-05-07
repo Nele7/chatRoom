@@ -11,10 +11,11 @@
         </div>
         <!-- 内容区域 -->
         <div class="chat-content" ref="chatContent">
-            <div >
+            <div id="chatCon">
                 <div class="chatContent-area" v-for="item in chatContentList">
                     <items :item="item"></items>    
                 </div>
+                <!-- <div class="online"><span>哈哈进来了</span></div> -->
             </div>
         </div>
         <!-- 底部区域 -->
@@ -40,53 +41,68 @@
     import BScroll from 'better-scroll'
     import {mapState,mapMutations} from 'vuex'
     import items from './chatItem'
+    import { ChatIM } from '../utils/io.service.js'
+    import { changeTime } from '../utils/time.js'
+    var IM = new ChatIM('39.105.232.6:3000/')
     export default {
         name:'chat',
         data() {
             return {
                 emojis: ['😂', '🙏', '😄', '😏', '😇', '😅', '😌', '😘', '😍', '🤓', '😜', '😎', '😊', '😳', '🙄', '😱', '😒', '😔', '😷', '👿', '🤗', '😩', '😤', '😣', '😰', '😴', '😬', '😭', '👻', '👍', '✌️', '👉', '👀', '🐶', '🐷', '😹'],
                 isShowEmoji: false,
-                chatContentList:[
-                    {   
-                        date: '2015-11-09 09:57:08', 
-                        loc: '江西省南昌市', 
-                        from: 'microzz', 
-                        avatarUrl: 'https://ss2.bdstatic.com/7Po3dSag_xI4khGkpoWK1HF6hhy/wisegame/wh%3D68%2C68/sign=ac35a54c65600c33f02cd6ce22606737/63d9f2d3572c11df6ebad97b6d2762d0f703c27b.jpg', 
-                        content: 'test', 
-                        self: false
-                    },
-                    {   
-                        date: '2015-11-09 09:57:08', 
-                        loc: '江西省南昌市', 
-                        from: 'microzz', 
-                        avatarUrl: 'https://ss2.bdstatic.com/7Po3dSag_xI4khGkpoWK1HF6hhy/wisegame/wh%3D68%2C68/sign=ac35a54c65600c33f02cd6ce22606737/63d9f2d3572c11df6ebad97b6d2762d0f703c27b.jpg', 
-                        content: 'test', 
-                        self: false
-                    },
-                    {   
-                        date: '2015-11-09 09:57:08', 
-                        loc: '山东省济南市', 
-                        from: '故意', 
-                        avatarUrl: 'https://ss2.bdstatic.com/7Po3dSag_xI4khGkpoWK1HF6hhy/wisegame/wh%3D68%2C68/sign=ac35a54c65600c33f02cd6ce22606737/63d9f2d3572c11df6ebad97b6d2762d0f703c27b.jpg', 
-                        content: '1.数据放在本地存储，name，add，chatRecord，'+
-                                '2. socket.io的学习', 
-                        self: true
-                    }
+                chatContentList:localStorage.chatContentList && JSON.parse(localStorage.chatContentList) ||[
+                    // {   
+                    //     date: '2015-11-09 09:57:08', 
+                    //     loc: '山东省济南市', 
+                    //     from: '故意', 
+                    //     avatarUrl: 'https://ss2.bdstatic.com/7Po3dSag_xI4khGkpoWK1HF6hhy/wisegame/wh%3D68%2C68/sign=ac35a54c65600c33f02cd6ce22606737/63d9f2d3572c11df6ebad97b6d2762d0f703c27b.jpg', 
+                    //     content: '1.数据放在本地存储，name，add，chatRecord，'+
+                    //             '2. socket.io的学习', 
+                    //     self: true
+                    // }
                 ],
                 textContent:'',
             }
+        },
+        created(){
+            
         },
         mounted(){
             this.$nextTick(() => {
                 this._initScroll();
                 let allEle = document.querySelectorAll('.chatContent-area')
                 this.chatContentScroll.scrollToElement(allEle[allEle.length-1],0);
+                this._initSocket()
             });
         },
-        computed:{
-            // ...mapState(['chatContentList'])
-        },
         methods: {
+            _initSocket(){
+                
+                IM.init()
+                IM.emit('online',this.$store.state.name)
+                let ele = document.getElementById('chatCon')
+                
+                IM.on('online',function(name){
+                    if(!name){
+                        return
+                    }
+                    let oOnline = document.createElement('div');
+                    oOnline.style.textAlign = 'center'
+                    oOnline.style.margin = '3px 0'
+                    oOnline.innerHTML = name + '上线了'
+                    ele.appendChild(oOnline)
+
+                })
+                
+                IM.on('receiveGroupMsg',(data)=>{
+                    console.log(data)
+                    this.chatContentList.push(data)
+                })
+
+                // 
+                this.random1 = Math.floor(Math.random()*7)
+                this.random2 = Math.floor(Math.random()*7)
+            },
             // 初始化better-scroll
             _initScroll() {
                 this.chatContentScroll = new BScroll(this.$refs.chatContent, {})
@@ -100,12 +116,19 @@
                 if(!this.textContent){
                     return 
                 }
+                IM.emit('sendGroupMsg',{
+                    date: changeTime(),
+                    loc: localStorage.cityname,
+                    from: `${localStorage.name}`,
+                    content: this.textContent,
+                    avataricon:this.random2, 
+                })
                 this.chatContentList.push({   
-                    date: '2015-11-09 09:57:08', 
-                    loc: '山东省济南市', 
-                    from: '问你故意问你故意', 
-                    avatarUrl: 'https://ss2.bdstatic.com/7Po3dSag_xI4khGkpoWK1HF6hhy/wisegame/wh%3D68%2C68/sign=ac35a54c65600c33f02cd6ce22606737/63d9f2d3572c11df6ebad97b6d2762d0f703c27b.jpg', 
-                    content: this.textContent, 
+                    date: changeTime(),
+                    loc: localStorage.cityname,
+                    from: `${localStorage.name}`,
+                    content: this.textContent,
+                    avataricon: this.random1, 
                     self: true
                 })
                 this.textContent =''
@@ -125,6 +148,11 @@
         },
         components:{
             items
+        },
+        watch:{
+            chatContentList(val){
+                localStorage.setItem('chatContentList',JSON.stringify(val)) 
+            }
         }
     }
 </script>
@@ -149,6 +177,11 @@
 .slide-fade-enter, .slide-fade-leave-active {
   transform: translateX(10px);
   opacity: 0;
+}
+#chatCon{
+    .online{
+        text-align: center;
+    }
 }
 .chat{
     display: flex;
@@ -185,32 +218,7 @@
         border-bottom: 1px solid rgba(138, 138, 138, 0.233);
         background-color: rgba(0, 0, 0, .1);
         overflow: hidden;
-        .chat-content-item{
-            padding: 10px;
-            width: 100%;
-            .chat-msg-date{
-                text-align: center;
-                margin: 5px 0;
-            }
-            .chat-msg-from{
-                display: flex;
-                align-items: center;
-                padding: 0 5px;
-                img{
-                    width: 25px;
-                    height: 25px;
-                    border-radius: 50%;
-                }
-            }
-            .chat-msg-content{
-                span{
-                    display: inline-block;
-                    margin: 5px;
-                    max-width: 50%;
-                    line-height: 17px;
-                }
-            }
-        }
+        
     }
     .sender{
         .chat-msg-from{

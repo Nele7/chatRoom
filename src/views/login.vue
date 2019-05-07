@@ -22,6 +22,8 @@
                 if(this.name == ''){
                     return false
                 }
+                this.$store.commit('changeName',this.name)
+                localStorage.setItem('name',this.name)
                 this.$router.push('./chat')
             }
         },

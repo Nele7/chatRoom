@@ -8,7 +8,10 @@
             <div class="chat-msg-from">
                 <span class="chat-msg-author">{{item.from}}</span>
                 <span class="chat-loc">[ {{item.loc}} ]</span>
-                <img :src="item.avatarUrl" alt="">
+                <!-- <img :src="item.avatarUrl" alt=""> -->
+                <svg class="icon" aria-hidden="true">
+                    <use :xlink:href="avatar[item.avataricon]"></use>
+                </svg>
             </div>
             <div class="chat-msg-content"><span>{{item.content}}</span></div>
         </div>
@@ -18,7 +21,10 @@
                 <span>{{item.date}}</span>
             </div>
             <div class="chat-msg-from">
-                <img :src="item.avatarUrl" alt="">
+                <!-- <img :src="item.avatarUrl" alt=""> -->
+                <svg class="icon" aria-hidden="true">
+                    <use :xlink:href="avatar[item.avataricon]"></use>
+                </svg>
                 <span class="chat-loc">[ {{item.loc}} ]</span>
                 <span class="chat-msg-author">{{item.from}}</span>
             </div>
@@ -32,6 +38,12 @@
         props:{
             item:{
                 type:Object
+            }
+        },
+        computed:{
+            avatar(){
+                let avatarIcon = ['#icon-Artboard','#icon-zhu','#icon-houzi','#icon-gou','#icon-xiongxiong','#icon-zhu1','#icon-tu']
+                return avatarIcon
             }
         }
     }
@@ -94,5 +106,12 @@
 .slide-fade-enter, .slide-fade-leave-active {
     transform: translateX(15px);
     opacity: 0;
+}
+.icon {
+  width: 25px;
+  height: 25px;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
 }
 </style>

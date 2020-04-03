@@ -1,3 +1,5 @@
+#!/bin/bash
+
 git add .
 
 read commitString、
